@@ -1,0 +1,28 @@
+--- ## Biuld apache 2.4 version 
+- hosts: local
+  user: adr
+  sudo: yes
+  gather_facts: yes
+
+  tasks: 
+   - name: Create apache root directory 
+     file: path=/home/apache-test state=directory mode=755
+   - name: Dwonload the apache tar file 
+     get_url: url=http://mirror.nyi.net/Apache/httpd/httpd-2.4.29.tar.gz  dest=/usr/src/httpd-2.4.29.tar.gz
+
+   - name: Installation dependency 
+     yum: name={{ item }} state=present
+     with_items: 
+        - gcc
+        - openssl-devel
+        - apr-devel
+        - apr-util-devel
+        - pcre-devel 
+        - telnet
+        - lynx        
+   - name: Untar the apache 
+     unarchive: src=/usr/src/httpd-2.4.29.tar.gz dest=/usr/src/ mode=755
+   - name: Change to apache tar directory 
+     shell: /usr/bin/cd /usr/src/httpd-2.4.29/ 
+   - name: Build the configuration 
+     raw: /bin/bash /usr/src/httpd-2.4.29/configure --enable-ssl --enable-so --prefix=/home/apache-test/ && make && make install 

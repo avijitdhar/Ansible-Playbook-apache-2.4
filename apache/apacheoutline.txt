@@ -1,0 +1,9 @@
+ download https 2.4 version tar file
+ create apache root directory 
+ untar and build it with ssl and apache root directory
+ Intsall otehr dependency 
+ duild the apache with module
+ setup ssl certificate 
+ setup the statup scripts 
+ start the service 
+ test the apache is up and running

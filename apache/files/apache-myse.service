@@ -1,0 +1,27 @@
+[Unit]
+Description=The Apache HTTP Server
+After=network-online.target remote-fs.target nss-lookup.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment='OPTIONS=-f /home/apache-myse/conf/httpd.conf'
+Environment='LANG=C'
+ExecStartPre=/bin/sh -c '/usr/bin/printf "$(/usr/bin/date +"%Y-%%m-%dT%T.%%N_%:z") Starting\n" >> /home/apache-myse/logs/init.log'
+ExecStart=/home/apache-myse/bin/httpd $OPTIONS -k start -DFOREGROUND -E /home/apache-myse/logs/init.log
+ExecStartPost=/bin/sh -c '/usr/bin/printf "$(/usr/bin/date +"%Y-%%m-%dT%T.%%N_%:z") Started\n" >> /home/apache-myse/logs/init.log'
+ExecStop=/home/apache-myse/bin/httpd $OPTIONS -k graceful-stop -E /home/apache-myse/logs/init.log
+ExecStopPost=/bin/sh -c '/usr/bin/printf "$(/usr/bin/date +"%Y-%%m-%dT%T.%%N_%:z") Stopped\n" >> /home/apache-myse/logs/init.log'
+ExecReload=/home/apache-myse/bin/httpd $OPTIONS -k graceful -E /home/apache-myse/logs/init.log
+TimeoutStopSec=300
+LimitNOFILE=infinity
+
+# Send SIGWINCH for graceful stop
+KillSignal=SIGWINCH
+KillMode=mixed
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
+
+
